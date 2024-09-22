@@ -1,7 +1,7 @@
 #!/bin/bash
 sudo su
 sudo apt update
-sudo apt install nfs-common
+sudo apt install nfs-common -y
 cd /home/ubuntu
 mkdir efs
 chmod -R 777 efs
