@@ -1,0 +1,28 @@
+ AWS single sign-on configure 
+
+
+STEP01: Create Organization
+
+STEP02: Enable IAM Identity centre
+
+STEP03: Setting -> Click Action ->Select Change Identity Source -> Choose External Identity Provider
+
+STEP04: Configure External Identity provider
+ 
+STEP05: We need to download the Service provider MetaData From AWS & We need to download the Identity provider MetaData From Azure
+
+STEP06: Open Microsoft Entra ID
+
+STEP07: And Click Enterprise Application & Click New Application
+
+STEP08: And Search AWS IAM Identity Center & then click Create and the Application will be Created  
+
+STEP09: Open AWS IAM Identity Center Application 
+
+STEP10: Click the Single Sign-on Tab and upload the AWS Service provider  metadata File  to Azure 
+
+STEP11: Upload Azure identity provider metadata to AWS & Click Next 
+
+STEP12: Type Accept
+
+STEP13: Change Identity Source
