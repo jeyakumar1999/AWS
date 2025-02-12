@@ -10,3 +10,5 @@ https://aws.amazon.com/blogs/security/simplify-dns-management-in-a-multiaccount-
 https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/architecture.html ---> The AWS Security Reference Architecture
 
 https://www.youtube.com/watch?v=sJWmxVYndiA
+
+https://www.youtube.com/watch?v=cAXPA5lqkV4 AWS migration
