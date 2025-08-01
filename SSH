@@ -1,0 +1,28 @@
+    #!/bin/bash
+
+    # Path to the SSH server configuration file
+    SSHD_CONFIG_FILE="/etc/ssh/sshd_config"
+
+    # Check if the file exists
+    if [ ! -f "$SSHD_CONFIG_FILE" ]; then
+        echo "Error: $SSHD_CONFIG_FILE not found."
+        exit 1
+    fi
+
+    # Use sed to uncomment and set PasswordAuthentication to 'yes'
+    # This command first removes any '#' at the start of the line, then ensures it's set to 'yes'
+    sudo sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' "$SSHD_CONFIG_FILE"
+
+    # Restart the SSH service to apply changes
+    # The command to restart depends on your Linux distribution (e.g., systemctl for systemd, service for older init systems)
+    if command -v systemctl &> /dev/null; then
+        sudo systemctl restart sshd
+        echo "SSH service restarted using systemctl."
+    elif command -v service &> /dev/null; then
+        sudo service sshd restart
+        echo "SSH service restarted using service."
+    else
+        echo "Could not determine how to restart SSH service. Please restart it manually."
+    fi
+
+    echo "Password authentication has been enabled in SSH."
