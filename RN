@@ -11,6 +11,9 @@ aws ec2 run-instances \
 
 
 
+aws ec2 run-instances \
+    --launch-template 'LaunchTemplateName=WINS-2025,Version=2' \
+    --count 1
 
 
 
