@@ -1,3 +1,8 @@
+USERNAME       VERSION
+Sobhita           1
+Tara              2
+Riya              3
+
 aws ec2 run-instances \
     --image-id ami-08ca1d1e465fbfe0c \
     --instance-type t2.micro \
