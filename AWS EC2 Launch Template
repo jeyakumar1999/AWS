@@ -1,7 +1,26 @@
+For windows template in aws.
+
+Region US-EAST-02 OHIO
+
 USERNAME       VERSION
 Sobhita           1
 Tara              2
 Riya              3
+
+Aws cli command
+
+aws ec2 run-instances \
+    --launch-template 'LaunchTemplateName=WINS-2025,Version=1' \
+    --count 1
+
+aws ec2 run-instances \
+    --launch-template 'LaunchTemplateName=WINS-2025,Version=2' \
+    --count 1
+
+aws ec2 run-instances \
+    --launch-template 'LaunchTemplateName=WINS-2025,Version=3' \
+    --count 1
+
 
 aws ec2 run-instances \
     --image-id ami-08ca1d1e465fbfe0c \
