@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "AWS APFOR OHIO REGION:"
+echo "AWS ALPHA ACCOUNT FOR OHIO REGION:"
 
 PS3="Enter your Name (1-3): "  # Customize the prompt
 
