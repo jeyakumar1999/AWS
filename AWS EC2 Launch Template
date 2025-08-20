@@ -224,8 +224,23 @@ select name in "LINUX" "WINDOWNS"; do
     esac
 done
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+#!/bin/bash
 
+# Set variables for your access key, secret key, and region
+AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY"
+AWS_REGION="us-east-1"
+PROFILE_NAME="my-profile"
+
+# Configure the credentials and region for the specified profile
+aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile "$PROFILE_NAME"
+aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile "$PROFILE_NAME"
+aws configure set region "$AWS_REGION" --profile "$PROFILE_NAME"
+aws configure set output "json" --profile "$PROFILE_NAME"
+
+echo "AWS credentials configured for profile: $PROFILE_NAME"
 
 
 
