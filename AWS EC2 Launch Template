@@ -83,14 +83,14 @@ Enabling password for ssh via shell script
 
 #!/bin/bash
 sudo su
-sudo sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
+sudo sed -i '$a sobhita ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
 sudo systemctl restart sshd
 sudo useradd -m -s /bin/bash sobhita
-echo "sobhita:9952017787@Aa" | sudo chpasswd#!/bin/bash
+echo "sobhita:9952017787@Aa" | sudo chpasswd
 
 #!/bin/bash
 sudo su
-sudo sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
+sudo sed -i '$a tara ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
 sudo systemctl restart sshd
 sudo useradd -m -s /bin/bash tara
 echo "tara:9952017787@Aa" | sudo chpasswd
@@ -98,7 +98,7 @@ echo "tara:9952017787@Aa" | sudo chpasswd
 
 #!/bin/bash
 sudo su
-sudo sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
+sudo sed -i '$a riya ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
 sudo systemctl restart sshd
 sudo useradd -m -s /bin/bash riya
 echo "riya:9952017787@Aa" | sudo chpasswd
