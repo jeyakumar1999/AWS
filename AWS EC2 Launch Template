@@ -111,7 +111,7 @@ echo "riya:9952017787@Aa" | sudo chpasswd
 aws ec2 run-instances \
     --image-id ami-08ca1d1e465fbfe0c \
     --instance-type t2.micro \
-    --user-data "IyEvYmluL2Jhc2gKc3VkbyBzdQpzdWRvIHNlZCAtaSAnL14jXD9QYXNzd29yZEF1dGhlbnRpY2F0aW9uL2NQYXNzd29yZEF1dGhlbnRpY2F0aW9uIHllcycgL2V0Yy9zc2gvc3NoZF9jb25maWcKc3VkbyBzeXN0ZW1jdGwgcmVzdGFydCBzc2hkCnN1ZG8gdXNlcmFkZCAtbSAtcyAvYmluL2Jhc2ggc29iaGl0YQplY2hvICJzb2JoaXRhOjk5NTIwMTc3ODdAQWEiIHwgc3VkbyBjaHBhc3N3ZA==" \
+    --user-data "IyEvYmluL2Jhc2gKc3VkbyBzdQpzdWRvIHNlZCAtaSAnJGEgc29iaGl0YSBBTEw9KEFMTCkgQUxMJyAvZXRjL3N1ZG9lcnM7IHNlZCAtaSAnL14jXD9QYXNzd29yZEF1dGhlbnRpY2F0aW9uL2NQYXNzd29yZEF1dGhlbnRpY2F0aW9uIHllcycgL2V0Yy9zc2gvc3NoZF9jb25maWcKc3VkbyBzeXN0ZW1jdGwgcmVzdGFydCBzc2hkCnN1ZG8gdXNlcmFkZCAtbSAtcyAvYmluL2Jhc2ggc29iaGl0YQplY2hvICJzb2JoaXRhOjk5NTIwMTc3ODdAQWEiIHwgc3VkbyBjaHBhc3N3ZA==" \
     --count 1 \
     --subnet-id subnet-0ab0676bed1f7923e \
     --key-name US-EAST-02 \
@@ -125,7 +125,7 @@ aws ec2 run-instances \
 aws ec2 run-instances \
     --image-id ami-08ca1d1e465fbfe0c \
     --instance-type t2.micro \
-    --user-data "IyEvYmluL2Jhc2gKc3VkbyBzdQpzdWRvIHNlZCAtaSAnL14jXD9QYXNzd29yZEF1dGhlbnRpY2F0aW9uL2NQYXNzd29yZEF1dGhlbnRpY2F0aW9uIHllcycgL2V0Yy9zc2gvc3NoZF9jb25maWcKc3VkbyBzeXN0ZW1jdGwgcmVzdGFydCBzc2hkCnN1ZG8gdXNlcmFkZCAtbSAtcyAvYmluL2Jhc2ggdGFyYQplY2hvICJ0YXJhOjk5NTIwMTc3ODdAQWEiIHwgc3VkbyBjaHBhc3N3ZA==" \
+    --user-data "IyEvYmluL2Jhc2gKc3VkbyBzdQpzdWRvIHNlZCAtaSAnJGEgdGFyYSBBTEw9KEFMTCkgQUxMJyAvZXRjL3N1ZG9lcnM7IHNlZCAtaSAnL14jXD9QYXNzd29yZEF1dGhlbnRpY2F0aW9uL2NQYXNzd29yZEF1dGhlbnRpY2F0aW9uIHllcycgL2V0Yy9zc2gvc3NoZF9jb25maWcKc3VkbyBzeXN0ZW1jdGwgcmVzdGFydCBzc2hkCnN1ZG8gdXNlcmFkZCAtbSAtcyAvYmluL2Jhc2ggdGFyYQplY2hvICJ0YXJhOjk5NTIwMTc3ODdAQWEiIHwgc3VkbyBjaHBhc3N3ZA==" \
     --count 1 \
     --subnet-id subnet-0ab0676bed1f7923e \
     --key-name US-EAST-02 \
@@ -141,7 +141,7 @@ aws ec2 run-instances \
 aws ec2 run-instances \
     --image-id ami-08ca1d1e465fbfe0c \
     --instance-type t2.micro \
-    --user-data "IyEvYmluL2Jhc2gKc3VkbyBzdQpzdWRvIHNlZCAtaSAnL14jXD9QYXNzd29yZEF1dGhlbnRpY2F0aW9uL2NQYXNzd29yZEF1dGhlbnRpY2F0aW9uIHllcycgL2V0Yy9zc2gvc3NoZF9jb25maWcKc3VkbyBzeXN0ZW1jdGwgcmVzdGFydCBzc2hkCnN1ZG8gdXNlcmFkZCAtbSAtcyAvYmluL2Jhc2ggcml5YQplY2hvICJyaXlhOjk5NTIwMTc3ODdAQWEiIHwgc3VkbyBjaHBhc3N3ZA==" \
+    --user-data "IyEvYmluL2Jhc2gKc3VkbyBzdQpzdWRvIHNlZCAtaSAnJGEgcml5YSBBTEw9KEFMTCkgQUxMJyAvZXRjL3N1ZG9lcnM7IHNlZCAtaSAnL14jXD9QYXNzd29yZEF1dGhlbnRpY2F0aW9uL2NQYXNzd29yZEF1dGhlbnRpY2F0aW9uIHllcycgL2V0Yy9zc2gvc3NoZF9jb25maWcKc3VkbyBzeXN0ZW1jdGwgcmVzdGFydCBzc2hkCnN1ZG8gdXNlcmFkZCAtbSAtcyAvYmluL2Jhc2ggcml5YQplY2hvICJyaXlhOjk5NTIwMTc3ODdAQWEiIHwgc3VkbyBjaHBhc3N3ZA==" \
     --count 1 \
     --subnet-id subnet-0ab0676bed1f7923e \
     --key-name US-EAST-02 \
