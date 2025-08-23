@@ -194,6 +194,18 @@ aws ec2 run-instances \
     --associate-public-ip-address
     break
     ;;
+            "S3 Server")
+aws ec2 run-instances \
+    --image-id ami-08ca1d1e465fbfe0c \
+    --instance-type t2.micro \
+    --user-data "IyEvYmluL2Jhc2gKIyBTZXQgdmFyaWFibGVzIGZvciB5b3VyIGFjY2VzcyBrZXksIHNlY3JldCBrZXksIGFuZCByZWdpb24KQVdTX0FDQ0VTU19LRVlfSUQ9IkFLSUFWV1IzRUVHQzdQQzNUUjZMIgpBV1NfU0VDUkVUX0FDQ0VTU19LRVk9InkzeGRCTjgyeWhQaFFYVnVXVk1BRytmRVlWTlNVWEJpWkw0SlIyZjAiCkFXU19SRUdJT049InVzLWVhc3QtMiIKIyBDb25maWd1cmUgdGhlIGNyZWRlbnRpYWxzIGFuZCByZWdpb24gZm9yIHRoZSBzcGVjaWZpZWQgcHJvZmlsZQphd3MgY29uZmlndXJlIHNldCBhd3NfYWNjZXNzX2tleV9pZCAiJEFXU19BQ0NFU1NfS0VZX0lEIiAKYXdzIGNvbmZpZ3VyZSBzZXQgYXdzX3NlY3JldF9hY2Nlc3Nfa2V5ICIkQVdTX1NFQ1JFVF9BQ0NFU1NfS0VZIgphd3MgY29uZmlndXJlIHNldCByZWdpb24gIiRBV1NfUkVHSU9OIiAKYXdzIGNvbmZpZ3VyZSBzZXQgb3V0cHV0ICJqc29uIiAKY3VybCAtTyBodHRwczovL3MzLmFtYXpvbmF3cy5jb20vbW91bnRwb2ludC1zMy1yZWxlYXNlL2xhdGVzdC94ODZfNjQvbW91bnQtczMucnBtCnN1ZG8geXVtIGluc3RhbGwgLi9tb3VudC1zMy5ycG0gLXkKc3VkbyBzdQpjZCAvaG9tZS9lYzItdXNlcgpta2RpciBzMwptb3VudC1zMyB2bS1zZXJpZXMwMSBzMwpta2RpciBlZnMKY2htb2QgLVIgNzc3IGVmcy8Kc3VkbyBtb3VudCAtdCBuZnM0IC1vIG5mc3ZlcnM9NC4xLHJzaXplPTEwNDg1NzYsd3NpemU9MTA0ODU3NixoYXJkLHRpbWVvPTYwMCxyZXRyYW5zPTIsbm9yZXN2cG9ydCAxMC4xLjAuMTQ0Oi8gZWZzCmVjaG8gImVjMi11c2VyOjg4NTc2MSIgfCBzdWRvIGNocGFzc3dkCnNlZCAtaSAnL14jXD9QYXNzd29yZEF1dGhlbnRpY2F0aW9uL2NQYXNzd29yZEF1dGhlbnRpY2F0aW9uIHllcycgL2V0Yy9zc2gvc3NoZF9jb25maWcKc3VkbyBzeXN0ZW1jdGwgcmVzdGFydCBzc2hk" \
+    --count 1 \
+    --subnet-id subnet-0ab0676bed1f7923e \
+    --key-name US-EAST-02 \
+    --security-group-ids sg-0d5693b9a61cabda4 \
+    --associate-public-ip-address
+    break
+    ;;
         *)
             echo "Invalid choice. Please select a number from 1 to 3."
             ;;
