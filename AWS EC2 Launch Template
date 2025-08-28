@@ -24,6 +24,7 @@ aws ec2 run-instances \
 PowerShell Script
 
 <powershell>
+$Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
 New-LocalUser -Name sobhita -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
 Add-LocalGroupMember -Group "Administrators" -Member sobhita
 Add-LocalGroupMember -Group "Remote Desktop Users" -Member sobhita
@@ -31,12 +32,14 @@ Add-LocalGroupMember -Group "Remote Desktop Users" -Member sobhita
 
 
 <powershell>
+$Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
 New-LocalUser -Name tara -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
 Add-LocalGroupMember -Group "Administrators" -Member tara
 Add-LocalGroupMember -Group "Remote Desktop Users" -Member tara
 </powershell>
 
 <powershell>
+$Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
 New-LocalUser -Name riya -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
 Add-LocalGroupMember -Group "Administrators" -Member riya
 Add-LocalGroupMember -Group "Remote Desktop Users" -Member riya
