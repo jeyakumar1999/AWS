@@ -7,6 +7,10 @@ Sobhita           1
 Tara              2
 Riya              3
 
+SD -> SOBHITA DHULIPLA
+RS -> RIYA SEN
+TS -> TARA SUTARIA
+
 Aws cli command
 
 aws ec2 run-instances \
