@@ -54,35 +54,59 @@ Shell for windows template
 
 #!/bin/bash
 
-echo "WINDOWS AMI TEMPLATE FOR OHIO REGION:"
+echo "WINDOWS AMI TEMPLATE :"
 
-PS3="Enter your Name (1-3): "  # Customize the prompt
+PS3="Enter your Name (1-6): "  # Customize the prompt
 
-select name in "SOBHITA" "TARA" "RIYA"; do
+select name in "USE2_SD" "USE2_TS" "USE2_RS" "CAWST01_SD" "CAWST01_TS" "CAWST01_RS"; do
     case $name in
-        "SOBHITA")
+        "USE2_SD")
             aws ec2 run-instances \
     --launch-template 'LaunchTemplateName=WINS-2025,Version=1' \
-    --count 1
+    --count 1 \
+
             break
             ;;
-        "TARA")
+        "USE2_TS")
             aws ec2 run-instances \
     --launch-template 'LaunchTemplateName=WINS-2025,Version=2' \
     --count 1
     break
             ;;
-        "RIYA")
+        "USE2_RS")
             aws ec2 run-instances \
     --launch-template 'LaunchTemplateName=WINS-2025,Version=3' \
     --count 1
     break
     ;;
-        *)
-            echo "Invalid choice. Please select a number from 1 to 3."
+            "CAWST01_SD")
+            aws ec2 run-instances \
+    --launch-template 'LaunchTemplateName=CA_WINS-2025,Version=1' \
+    --count 1 \
+    --region ca-west-1
+        break
+    ;;
+                "CAWST01_TS")
+            aws ec2 run-instances \
+    --launch-template 'LaunchTemplateName=CA_WINS-2025,Version=2' \
+    --count 1 \
+    --region ca-west-1
+        break
+    ;;
+                "CAWST01_RS")
+            aws ec2 run-instances \
+    --launch-template 'LaunchTemplateName=CA_WINS-2025,Version=3' \
+    --count 1 \
+    --region ca-west-1
+        break
+    ;;
+     *)
+            echo "Invalid choice. Please select a number from 1 to 6."
             ;;
     esac
 done
+
+
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
