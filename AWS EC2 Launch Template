@@ -28,6 +28,7 @@ aws ec2 run-instances \
 PowerShell Script
 
 <powershell>
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
 $Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
 New-LocalUser -Name sobhita -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
 Add-LocalGroupMember -Group "Administrators" -Member sobhita
@@ -36,6 +37,7 @@ Add-LocalGroupMember -Group "Remote Desktop Users" -Member sobhita
 
 
 <powershell>
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
 $Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
 New-LocalUser -Name tara -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
 Add-LocalGroupMember -Group "Administrators" -Member tara
@@ -43,10 +45,34 @@ Add-LocalGroupMember -Group "Remote Desktop Users" -Member tara
 </powershell>
 
 <powershell>
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
 $Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
 New-LocalUser -Name riya -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
 Add-LocalGroupMember -Group "Administrators" -Member riya
 Add-LocalGroupMember -Group "Remote Desktop Users" -Member riya
+</powershell>
+
+<powershell>
+$Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
+New-LocalUser -Name pranitha -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
+Add-LocalGroupMember -Group "Administrators" -Member pranitha
+Add-LocalGroupMember -Group "Remote Desktop Users" -Member pranitha
+</powershell>
+
+<powershell>
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
+$Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
+New-LocalUser -Name shraddha -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
+Add-LocalGroupMember -Group "Administrators" -Member shraddha
+Add-LocalGroupMember -Group "Remote Desktop Users" -Member shraddha
+</powershell>
+
+<powershell>
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
+$Path = $env:TEMP; $Installer = "chrome_installer.exe"; Invoke-WebRequest "http://dl.google.com/chrome/install/375.126/chrome_installer.exe" -OutFile $Path\$Installer; Start-Process -FilePath $Path\$Installer -Args "/silent /install" -Verb RunAs -Wait; Remove-Item $Path\$Installer
+New-LocalUser -Name Diana -Password (ConvertTo-SecureString -AsPlainText -Force 9952017787@Aa) -AccountNeverExpires:$true
+Add-LocalGroupMember -Group "Administrators" -Member Diana
+Add-LocalGroupMember -Group "Remote Desktop Users" -Member Diana
 </powershell>
 
 
@@ -118,6 +144,7 @@ sudo sed -i '$a sobhita ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthen
 sudo systemctl restart sshd
 sudo useradd -m -s /bin/bash sobhita
 echo "sobhita:9952017787@Aa" | sudo chpasswd
+echo "ec2-user:9952017787@Aa" | sudo chpasswd
 
 #!/bin/bash
 sudo su
@@ -125,7 +152,7 @@ sudo sed -i '$a tara ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthentic
 sudo systemctl restart sshd
 sudo useradd -m -s /bin/bash tara
 echo "tara:9952017787@Aa" | sudo chpasswd
-
+echo "ec2-user:9952017787@Aa" | sudo chpasswd
 
 #!/bin/bash
 sudo su
@@ -133,6 +160,32 @@ sudo sed -i '$a riya ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthentic
 sudo systemctl restart sshd
 sudo useradd -m -s /bin/bash riya
 echo "riya:9952017787@Aa" | sudo chpasswd
+echo "ec2-user:9952017787@Aa" | sudo chpasswd
+
+#!/bin/bash
+sudo su
+sudo sed -i '$a pranitha ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
+sudo systemctl restart sshd
+sudo useradd -m -s /bin/bash pranitha
+echo "pranitha:9952017787@Aa" | sudo chpasswd
+echo "ec2-user:9952017787@Aa" | sudo chpasswd
+
+#!/bin/bash
+sudo su
+sudo sed -i '$a shraddha ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
+sudo systemctl restart sshd
+sudo useradd -m -s /bin/bash shraddha
+echo "shraddha:9952017787@Aa" | sudo chpasswd
+echo "ec2-user:9952017787@Aa" | sudo chpasswd
+
+#!/bin/bash
+sudo su
+sudo sed -i '$a Diana ALL=(ALL) ALL' /etc/sudoers; sed -i '/^#\?PasswordAuthentication/cPasswordAuthentication yes' /etc/ssh/sshd_config
+sudo systemctl restart sshd
+sudo useradd -m -s /bin/bash Diana
+echo "Diana:9952017787@Aa" | sudo chpasswd
+echo "ec2-user:9952017787@Aa" | sudo chpasswd
+
 
 
 
