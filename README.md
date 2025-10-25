@@ -1,3 +1,5 @@
+install JQ in gitbash
+curl -L -o /usr/bin/jq.exe https://github.com/jqlang/jq/releases/latest/download/jq-win64.exe
 
 
 
