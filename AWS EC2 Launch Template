@@ -338,68 +338,25 @@ aws configure set output "json" --profile "$PROFILE_NAME"
 
 echo "AWS credentials configured for profile: $PROFILE_NAME"
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Domain joining for EC2 instance:-
+
+aws ssm send-command \
+    --instance-ids "<YOUR_INSTANCE_ID>" \
+    --document-name "AWS-JoinDirectoryServiceDomain" \
+    --parameters '{
+        "directoryId":["<YOUR_DIRECTORY_ID>"],
+        "directoryName":["<YOUR_DIRECTORY_NAME>"],
+        "dnsIpAddresses":["<IP_ADDRESS_1>","<IP_ADDRESS_2>"]
+    }' \
+    --region "<REGION>" \
+    --comment "Domain join with explicit DNS configuration"
 
 
-
-
-
-
-
-
-aws ec2 run-instances \
-    --image-id ami-08ca1d1e465fbfe0c \
-    --instance-type t2.micro \
-    --count 1 \
-    --subnet-id subnet-0ab0676bed1f7923e \
-    --key-name US-EAST-02 \
-    --security-group-ids sg-0d5693b9a61cabda4
- 
-
-   --user-data file://my_script.txt
-
-
-
-
-
-
-
-
-
-aws ec2 run-instances --image-id ami-08ca1d1e465fbfe0c --instance-type t2.micro --count 1 --vpc-id vpc-041f9d187cd383058 --subnet-id subnet-0ab0676bed1f7923e --key-name US-EAST-02 --security-group-ids sg-0d5693b9a61cabda4
-
-
-windows = ami-07f75f93a728b971d
-
-|  ap-south-2      |
-|  ap-south-1      |
-|  eu-south-1      |
-|  eu-south-2      |
-|  me-central-1    |
-|  il-central-1    |
-|  ca-central-1    |
-|  ap-east-2       |
-|  mx-central-1    |
-|  eu-central-1    |
-|  eu-central-2    |
-|  us-west-1       |
-|  us-west-2       |
-|  af-south-1      |
-|  eu-north-1      |
-|  eu-west-3       |
-|  eu-west-2       |
-|  eu-west-1       |
-|  ap-northeast-3  |
-|  ap-northeast-2  |
-|  me-south-1      |
-|  ap-northeast-1  |
-|  sa-east-1       |
-|  ap-east-1       |
-|  ca-west-1       |
-|  ap-southeast-1  |
-|  ap-southeast-2  |
-|  ap-southeast-3  |
-|  ap-southeast-4  |
-|  us-east-1       |
-|  ap-southeast-5  |
-|  us-east-2       |
-|  ap-southeast-7 
+aws ssm send-command \
+    --targets Key=tag:DomainJoin,Values=Pending \
+    --document-name "AWS-JoinDirectoryServiceDomain" \
+    --parameters '{"directoryId":["<YOUR_DIRECTORY_ID>"], "directoryName":["<YOUR_DIRECTORY_NAME>"]}' \
+    --region "<REGION>" \
+    --comment "Bulk domain join using EC2 tags"
