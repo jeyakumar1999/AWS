@@ -360,3 +360,28 @@ aws ssm send-command \
     --parameters '{"directoryId":["<YOUR_DIRECTORY_ID>"], "directoryName":["<YOUR_DIRECTORY_NAME>"]}' \
     --region "<REGION>" \
     --comment "Bulk domain join using EC2 tags"
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Installing Customize Active Directory Domain Service in PowerShell Script
+
+<powershell>
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
+Install-WindowsFeature -Name AD-Domain-Services, DNS -IncludeManagementTools            
+$DSRMPasswordPlain = "YourComplexDSRMpassword123!"
+$DSRMPasswordSecure = ConvertTo-SecureString -String $DSRMPasswordPlain -AsPlainText -Force
+Import-Module ADDSDeployment
+Install-ADDSForest `
+-CreateDnsDelegation:$false `
+-DatabasePath "C:\Windows\NTDS" `
+-DomainMode "Win2025" `
+-DomainName "syd.ltd" `
+-DomainNetbiosName "SYD" `
+-ForestMode "Win2025" `
+-InstallDns:$true `
+-LogPath "C:\Windows\NTDS" `
+-NoRebootOnCompletion:$false `
+-SafeModeAdministratorPassword $DSRMPasswordSecure `
+-SysvolPath "C:\Windows\SYSVOL" `
+-Force:$true
+</powershell>
