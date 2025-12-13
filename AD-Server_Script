@@ -124,3 +124,52 @@ New-ADUser -Name "Jennifer" `
     -Enabled $true `
     -ChangePasswordAtLogon $true `
     -GivenName "Avika" -Surname "Gor"
+
+<powershell>
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
+Install-WindowsFeature -Name AD-Domain-Services, DNS -IncludeManagementTools            
+$DSRMPasswordPlain = "YourComplexDSRMpassword123!"
+$DSRMPasswordSecure = ConvertTo-SecureString -String $DSRMPasswordPlain -AsPlainText -Force
+Import-Module ADDSDeployment
+Install-ADDSForest `
+-CreateDnsDelegation:$false `
+-DatabasePath "C:\Windows\NTDS" `
+-DomainMode "Win2025" `
+-DomainName "syd.ltd" `
+-DomainNetbiosName "SYD" `
+-ForestMode "Win2025" `
+-InstallDns:$true `
+-LogPath "C:\Windows\NTDS" `
+-NoRebootOnCompletion:$false `
+-SafeModeAdministratorPassword $DSRMPasswordSecure `
+-SysvolPath "C:\Windows\SYSVOL" `
+-Force:$true
+</powershell>
+<powershell>
+New-ADOrganizationalUnit -Name "Alpha" -Path "DC=syd,DC=ltd" -ProtectedFromAccidentalDeletion $false -Description "Organizational Unit for Alpha Users and Resources"
+New-ADOrganizationalUnit -Name "Delta" -Path "DC=syd,DC=ltd" -ProtectedFromAccidentalDeletion $false -Description "Organizational Unit for Delta Users and Resources"
+New-ADOrganizationalUnit -Name "Gamma" -Path "DC=syd,DC=ltd" -ProtectedFromAccidentalDeletion $false -Description "Organizational Unit for Gamma Users and Resources"
+$PlaintextPassword = "9952017787@Aa"
+$InitialPassword = ConvertTo-SecureString -String $PlaintextPassword -AsPlainText -Force
+New-ADUser -Name "Sobhita" -SamAccountName "Sobhita" -UserPrincipalName "Sobhita@syd.ltd" -Path "OU=Alpha,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Sobhita" -Surname "Dhulipala"
+New-ADUser -Name "Riya" -SamAccountName "Riya" -UserPrincipalName "Riya@syd.ltd" -Path "OU=Alpha,DC=syd,DC=ltd"  -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Riya" -Surname "Sen"
+New-ADUser -Name "Tara" -SamAccountName "Tara" -UserPrincipalName "Tara@syd.ltd" -Path "OU=Alpha,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Tara" -Surname "Sutaria"
+New-ADUser -Name "Pranitha" -SamAccountName "Pranitha" -UserPrincipalName "Pranitha@syd.ltd" -Path "OU=Gamma,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Pranitha" -Surname "Subhash"
+New-ADUser -Name "Shraddha" -SamAccountName "Shraddha" -UserPrincipalName "Shraddha@syd.ltd" -Path "OU=Gamma,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Shraddha" -Surname "Kapoor"
+New-ADUser -Name "Diana" -SamAccountName "Diana" -UserPrincipalName "Diana@syd.ltd" -Path "OU=Gamma,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Diana" -Surname "Penty"
+New-ADUser -Name "Shriya" -SamAccountName "Shriya" -UserPrincipalName "Shriya@syd.ltd" -Path "OU=Delta,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Shriya" -Surname "Saran"
+New-ADUser -Name "Jennifer" -SamAccountName "Jennifer" -UserPrincipalName "Jennifer@syd.ltd" -Path "OU=Delta,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Jennifer" -Surname "Winget"
+New-ADUser -Name "Avika" -SamAccountName "Avika" -UserPrincipalName "Avika@syd.ltd" -Path "OU=Delta,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Avika" -Surname "Gor"
+</powershell>
+<powershell>
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Sobhita
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Riya
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Tara
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Pranitha
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Shraddha
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Diana
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Shriya
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Jennifer
+Add-ADGroupMember -Identity "Enterprise Admins" -Members Avika
+</powershell>
+
