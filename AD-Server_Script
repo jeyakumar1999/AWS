@@ -1,0 +1,126 @@
+Domain Service Installing st
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
+Install-WindowsFeature -Name AD-Domain-Services, DNS -IncludeManagementTools            
+$DSRMPasswordPlain = "9952017787@Aa"
+$DSRMPasswordSecure = ConvertTo-SecureString -String $DSRMPasswordPlain -AsPlainText -Force
+Import-Module ADDSDeployment
+Install-ADDSForest `
+-CreateDnsDelegation:$false `
+-DatabasePath "C:\Windows\NTDS" `
+-DomainMode "Win2025" `
+-DomainName "syd.ltd" `
+-DomainNetbiosName "SYD" `
+-ForestMode "Win2025" `
+-InstallDns:$true `
+-LogPath "C:\Windows\NTDS" `
+-NoRebootOnCompletion:$false `
+-SafeModeAdministratorPassword $DSRMPasswordSecure `
+-SysvolPath "C:\Windows\SYSVOL" `
+-Force:$true
+
+New-ADOrganizationalUnit -Name "syd" `
+    -Path "DC=syd,DC=ltd" `
+    -ProtectedFromAccidentalDeletion $true `
+    -Description "Organizational Unit for New York Users and Resources"
+
+$PlaintextPassword = "9952017787@Aa"
+$InitialPassword = ConvertTo-SecureString -String $PlaintextPassword -AsPlainText -Force
+
+# Sobhita Dhulipala
+
+New-ADUser -Name "Sobhita" `
+    -SamAccountName "Sobhita" `
+    -UserPrincipalName "Sobhita@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Sobhita" -Surname "Dhulipala"
+
+# Riya Sen
+
+    New-ADUser -Name "Riya" `
+    -SamAccountName "Riya" `
+    -UserPrincipalName "Riya@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Riya" -Surname "Sen"
+
+# Tara Sutaria
+
+    New-ADUser -Name "Tara" `
+    -SamAccountName "Tara" `
+    -UserPrincipalName "Tara@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Tara" -Surname "Sutaria"
+
+
+# Pranitha Subhash
+
+New-ADUser -Name "Pranitha" `
+    -SamAccountName "Pranitha" `
+    -UserPrincipalName "Pranitha@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Pranitha" -Surname "Subhash"
+
+# Shraddha Kapoor
+
+New-ADUser -Name "Shraddha" `
+    -SamAccountName "Shraddha" `
+    -UserPrincipalName "Shraddha@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Shraddha" -Surname "Kapoor"
+
+# Diana Penty
+
+New-ADUser -Name "Diana" `
+    -SamAccountName "Diana" `
+    -UserPrincipalName "Diana@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Diana" -Surname "Penty"
+
+# Shriya Saran
+
+    New-ADUser -Name "Shriya" `
+    -SamAccountName "Shriya" `
+    -UserPrincipalName "Shriya@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Shriya" -Surname "Saran"
+#Jennifer Winget
+
+New-ADUser -Name "Jennifer" `
+    -SamAccountName "Jennifer" `
+    -UserPrincipalName "Jennifer@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Jennifer" -Surname "Winget"
+
+# Avika Gor
+
+    New-ADUser -Name "Avika" `
+    -SamAccountName "Avika" `
+    -UserPrincipalName "Avika@syd.ltd" `
+    -Path "OU=syd,DC=syd,DC=ltd"  `
+    -AccountPassword $InitialPassword `
+    -Enabled $true `
+    -ChangePasswordAtLogon $true `
+    -GivenName "Avika" -Surname "Gor"
