@@ -173,3 +173,9 @@ Add-ADGroupMember -Identity "Enterprise Admins" -Members Jennifer
 Add-ADGroupMember -Identity "Enterprise Admins" -Members Avika
 </powershell>
 
+<powershell>
+$Username = "syd.ltd\administrator"
+$Password = "9952017787@Aa" | ConvertTo-SecureString -AsPlainText -Force
+$MyCred = New-Object System.Management.Automation.PSCredential($Username, $Password)
+Add-Computer -DomainName "syd.ltd" -Credential $MyCred -Restart
+</powershell>
