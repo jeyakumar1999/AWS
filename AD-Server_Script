@@ -179,3 +179,76 @@ $Password = "9952017787@Aa" | ConvertTo-SecureString -AsPlainText -Force
 $MyCred = New-Object System.Management.Automation.PSCredential($Username, $Password)
 Add-Computer -DomainName "syd.ltd" -Credential $MyCred -Restart
 </powershell>
+
+
+
+
+<powershell>
+# 1. Set Local Administrator Password
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
+
+# 2. Install AD-Domain-Services and DNS
+Install-WindowsFeature -Name AD-Domain-Services, DNS -IncludeManagementTools
+
+# 3. Create a Post-Reboot Script to provision OUs and Users
+$PostRebootScript = @'
+Start-Sleep -Seconds 60 # Give AD services a moment to stabilize after boot
+Import-Module ActiveDirectory
+
+# Create OUs
+New-ADOrganizationalUnit -Name "Alpha" -Path "DC=syd,DC=ltd" -ProtectedFromAccidentalDeletion $false -Description "Organizational Unit for Alpha Users and Resources"
+New-ADOrganizationalUnit -Name "Delta" -Path "DC=syd,DC=ltd" -ProtectedFromAccidentalDeletion $false -Description "Organizational Unit for Delta Users and Resources"
+New-ADOrganizationalUnit -Name "Gamma" -Path "DC=syd,DC=ltd" -ProtectedFromAccidentalDeletion $false -Description "Organizational Unit for Gamma Users and Resources"
+
+# Setup User Password
+$PlaintextPassword = "9952017787@Aa"
+$InitialPassword = ConvertTo-SecureString -String $PlaintextPassword -AsPlainText -Force
+
+# Create Users
+New-ADUser -Name "Sobhita" -SamAccountName "Sobhita" -UserPrincipalName "Sobhita@syd.ltd" -Path "OU=Alpha,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Sobhita" -Surname "Dhulipala"
+New-ADUser -Name "Riya" -SamAccountName "Riya" -UserPrincipalName "Riya@syd.ltd" -Path "OU=Alpha,DC=syd,DC=ltd"  -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Riya" -Surname "Sen"
+New-ADUser -Name "Tara" -SamAccountName "Tara" -UserPrincipalName "Tara@syd.ltd" -Path "OU=Alpha,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Tara" -Surname "Sutaria"
+New-ADUser -Name "Pranitha" -SamAccountName "Pranitha" -UserPrincipalName "Pranitha@syd.ltd" -Path "OU=Gamma,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Pranitha" -Surname "Subhash"
+New-ADUser -Name "Shraddha" -SamAccountName "Shraddha" -UserPrincipalName "Shraddha@syd.ltd" -Path "OU=Gamma,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Shraddha" -Surname "Kapoor"
+New-ADUser -Name "Diana" -SamAccountName "Diana" -UserPrincipalName "Diana@syd.ltd" -Path "OU=Gamma,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Diana" -Surname "Penty"
+New-ADUser -Name "Shriya" -SamAccountName "Shriya" -UserPrincipalName "Shriya@syd.ltd" -Path "OU=Delta,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Shriya" -Surname "Saran"
+New-ADUser -Name "Jennifer" -SamAccountName "Jennifer" -UserPrincipalName "Jennifer@syd.ltd" -Path "OU=Delta,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Jennifer" -Surname "Winget"
+New-ADUser -Name "Avika" -SamAccountName "Avika" -UserPrincipalName "Avika@syd.ltd" -Path "OU=Delta,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Avika" -Surname "Gor"
+
+# Add Users to Enterprise Admins
+$Users = @("Sobhita", "Riya", "Tara", "Pranitha", "Shraddha", "Diana", "Shriya", "Jennifer", "Avika")
+Add-ADGroupMember -Identity "Enterprise Admins" -Members $Users
+
+# Self-destruct scheduled task so it only runs once
+Unregister-ScheduledTask -TaskName "PostADExtension" -Confirm:$false
+'@
+
+# Save the post-reboot script to the local drive
+Target-Path
+$ScriptPath = "C:\ProvisionAD.ps1"
+Out-File -FilePath $ScriptPath -InputObject $PostRebootScript -Encoding UTF8
+
+# 4. Create Scheduled Task to run the script immediately after reboot
+$Action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File $ScriptPath"
+$Trigger = New-ScheduledTaskTrigger -AtStartup
+$Principal = New-ScheduledTaskPrincipal -UserId "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+Register-ScheduledTask -TaskName "PostADExtension" -Action $Action -Trigger $Trigger -Principal $Principal
+
+# 5. Deploy AD Forest (This triggers the reboot)
+$DSRMPasswordPlain = "YourComplexDSRMpassword123!"
+$DSRMPasswordSecure = ConvertTo-SecureString -String $DSRMPasswordPlain -AsPlainText -Force
+
+Import-Module ADDSDeployment
+Install-ADDSForest `
+-CreateDnsDelegation:$false `
+-DatabasePath "C:\Windows\NTDS" `
+-DomainMode "Win2025" `
+-DomainName "syd.ltd" `
+-DomainNetbiosName "SYD" `
+-ForestMode "Win2025" `
+-InstallDns:$true `
+-NoRebootOnCompletion:$false `
+-SafeModeAdministratorPassword $DSRMPasswordSecure `
+-SysvolPath "C:\Windows\SYSVOL" `
+-Force:$true
+</powershell>
