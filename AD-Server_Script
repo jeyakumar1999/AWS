@@ -181,7 +181,7 @@ Add-Computer -DomainName "syd.ltd" -Credential $MyCred -Restart
 </powershell>
 
 
-
+## Root_Domain-Script01
 
 <powershell>
 # 1. Set Local Administrator Password
@@ -252,3 +252,331 @@ Install-ADDSForest `
 -SysvolPath "C:\Windows\SYSVOL" `
 -Force:$true
 </powershell>
+
+## Root_Domain-Script02
+
+<powershell>
+# 1. Set Local Administrator Password
+Set-LocalUser -Name "Administrator" -Password (ConvertTo-SecureString -AsPlainText "9952017787@Aa" -Force)
+
+# 2. Install AD-Domain-Services and DNS
+Install-WindowsFeature -Name AD-Domain-Services, DNS -IncludeManagementTools
+
+# 3. Create a Post-Reboot Script to provision OUs and Users
+$PostRebootScript = @'
+Start-Sleep -Seconds 60 # Give AD services a moment to stabilize after boot
+Import-Module ActiveDirectory
+
+# Create OUs
+New-ADOrganizationalUnit -Name "LOTUS" -Path "DC=syd,DC=ltd" -ProtectedFromAccidentalDeletion $false -Description "Organizational Unit for Lotus OU and Resources"
+
+# 1. Define the Main (Parent) OU Name and Path
+$ParentOUName = "LOTUS"
+$DomainDN     = "DC=syd,DC=ltd"
+$MainOUDN     = "OU=$ParentOUName,$DomainDN"
+
+# Automatically create the Parent OU if it doesn't exist yet
+if (-not (Get-ADOrganizationalUnit -Filter "Name -eq '$ParentOUName'" -SearchBase $DomainDN -ErrorAction SilentlyContinue)) {
+    Write-Host "Main OU '$ParentOUName' not found. Creating it now..." -ForegroundColor Yellow
+    New-ADOrganizationalUnit -Name $ParentOUName `
+                             -Path $DomainDN `
+                             -ProtectedFromAccidentalDeletion $false `
+                             -Description "Main Parent OU for Resources"
+    Write-Host "Successfully created Main OU: $MainOUDN" -ForegroundColor Green
+}
+
+# 2. Define the list of Sub-OUs you want to create inside it
+$SubOUs = @("ALPHA", "BETA", "GAMMA", "EPSLION", "ZETA", "DELTA", "GROUPS")
+
+Write-Host "`nStarting Sub-OU provision tracking for Main OU: $MainOUDN" -ForegroundColor Cyan
+
+# 3. Iterate and build the structures safely
+foreach ($SubOU in $SubOUs) {
+    # Construct the full target Distinguished Name for the validation check
+    $TargetDN = "OU=$SubOU,$MainOUDN"
+    
+    # FIX: Use -Filter instead of -Identity. -Filter returns $null safely if the object isn't found.
+    if (-not (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$TargetDN'")) {
+        New-ADOrganizationalUnit -Name $SubOU `
+                                 -Path $MainOUDN `
+                                 -ProtectedFromAccidentalDeletion $false `
+                                 -Description "Sub-OU for $SubOU accounts"
+        
+        Write-Host "  + Successfully created Sub-OU: $SubOU" -ForegroundColor Green
+    } else {
+        Write-Host "  o Sub-OU '$SubOU' already exists. Skipping." -ForegroundColor Gray
+    }
+}
+
+# Setup User Password
+$PlaintextPassword = "9952017787@Aa"
+$InitialPassword = ConvertTo-SecureString -String $PlaintextPassword -AsPlainText -Force
+
+# Create Users
+New-ADUser -Name "Sobhita" -SamAccountName "Sobhita" -UserPrincipalName "Sobhita@syd.ltd" -Path "OU=ALPHA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Sobhita" -Surname "Dhulipala"
+New-ADUser -Name "Riya" -SamAccountName "Riya" -UserPrincipalName "Riya@syd.ltd" -Path "OU=ALPHA,OU=LOTUS,DC=syd,DC=ltd"  -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Riya" -Surname "Sen"
+New-ADUser -Name "Tara" -SamAccountName "Tara" -UserPrincipalName "Tara@syd.ltd" -Path "OU=ALPHA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Tara" -Surname "Sutaria"
+New-ADUser -Name "Kashmira" -SamAccountName "Kashmira" -UserPrincipalName "Kashmira@syd.ltd" -Path "OU=ALPHA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Kashmira" -Surname "Pardeshi"
+New-ADUser -Name "Amy" -SamAccountName "Amy" -UserPrincipalName "Amy@syd.ltd" -Path "OU=ALPHA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Amy" -Surname "Jackson"
+New-ADUser -Name "Shalini" -SamAccountName "Shalini" -UserPrincipalName "Shalini@syd.ltd" -Path "OU=ALPHA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Shalini" -Surname "Pandey"
+New-ADUser -Name "Amyra" -SamAccountName "Amyra" -UserPrincipalName "Amyra@syd.ltd" -Path "OU=BETA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Amyra" -Surname "Dastur"
+New-ADUser -Name "Disha" -SamAccountName "Disha" -UserPrincipalName "Disha@syd.ltd" -Path "OU=BETA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Disha" -Surname "Patani"
+New-ADUser -Name "Nidhhi" -SamAccountName "Nidhhi" -UserPrincipalName "Nidhhi@syd.ltd" -Path "OU=BETA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Nidhhi" -Surname "Agerwal"
+New-ADUser -Name "Pranitha" -SamAccountName "Pranitha" -UserPrincipalName "Pranitha@syd.ltd" -Path "OU=GAMMA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Pranitha" -Surname "Subhash"
+New-ADUser -Name "Shraddha" -SamAccountName "Shraddha" -UserPrincipalName "Shraddha@syd.ltd" -Path "OU=GAMMA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Shraddha" -Surname "Kapoor"
+New-ADUser -Name "Diana" -SamAccountName "Diana" -UserPrincipalName "Diana@syd.ltd" -Path "OU=GAMMA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Diana" -Surname "Penty"
+New-ADUser -Name "Shriya" -SamAccountName "Shriya" -UserPrincipalName "Shriya@syd.ltd" -Path "OU=DELTA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Shriya" -Surname "Saran"
+New-ADUser -Name "Jennifer" -SamAccountName "Jennifer" -UserPrincipalName "Jennifer@syd.ltd" -Path "OU=DELTA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Jennifer" -Surname "Winget"
+New-ADUser -Name "Avika" -SamAccountName "Avika" -UserPrincipalName "Avika@syd.ltd" -Path "OU=DELTA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Avika" -Surname "Gor"
+New-ADUser -Name "Georgina" -SamAccountName "Georgina" -UserPrincipalName "Georgina@syd.ltd" -Path "OU=EPSLION,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Georgina" -Surname "Rodríguez"
+New-ADUser -Name "Hailee" -SamAccountName "Hailee" -UserPrincipalName "Hailee@syd.ltd" -Path "OU=EPSLION,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Hailee" -Surname "Steinfeld"
+New-ADUser -Name "Selena" -SamAccountName "Selena" -UserPrincipalName "Selena@syd.ltd" -Path "OU=EPSLION,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Selena" -Surname "Gomez"
+New-ADUser -Name "Anushka" -SamAccountName "Anushka" -UserPrincipalName "Anushka@syd.ltd" -Path "OU=ZETA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Anushka" -Surname "Sen"
+New-ADUser -Name "Kylie" -SamAccountName "Kylie" -UserPrincipalName "Kylie@syd.ltd" -Path "OU=ZETA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Kylie" -Surname "Jenner"
+New-ADUser -Name "Sharvari" -SamAccountName "Sharvari" -UserPrincipalName "Sharvari@syd.ltd" -Path "OU=ZETA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Sharvari" -Surname "Wagh"
+New-ADUser -Name "Anagha" -SamAccountName "Anagha" -UserPrincipalName "Anagha@syd.ltd" -Path "OU=GAMMA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Anagha" -Surname "Maruthora"
+New-ADUser -Name "Bindu" -SamAccountName "Bindu" -UserPrincipalName "Bindu@syd.ltd" -Path "OU=GAMMA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Bindu" -Surname "Madhavi"
+New-ADUser -Name "Raiza" -SamAccountName "Raiza" -UserPrincipalName "Raiza@syd.ltd" -Path "OU=GAMMA,OU=LOTUS,DC=syd,DC=ltd" -AccountPassword $InitialPassword -Enabled $true -ChangePasswordAtLogon $false -GivenName "Raiza" -Surname "Wilson"
+
+# Wait a brief moment to ensure all user records have committed before grouping them
+Start-Sleep -Seconds 5
+
+# Add Users to Enterprise Admins
+$Users = @("Sobhita", "Riya", "Tara", "Pranitha", "Shraddha", "Diana", "Shriya", "Jennifer", "Avika", "Anushka", "Kylie","Sharvari", "Kashmira", "Shalini", "Amyra", "Disha", "Nidhhi", "Georgina", "Hailee", "Selena", "Anagha", "Bindu", "Raiza", "Amy")
+Add-ADGroupMember -Identity "Enterprise Admins" -Members $Users
+
+# Add Users to Custom Groups
+$GroupProvisions = @(
+    @{ 
+        Name    = "ALPHA-USEST02"
+        OU      = "OU=GROUPS,OU=LOTUS,DC=syd,DC=ltd"
+        Members = @("Sobhita", "Riya", "Tara") 
+    }
+    @{ 
+        Name    = "ALPHA-CAWST01"
+        OU      = "OU=GROUPS,OU=LOTUS,DC=syd,DC=ltd"
+        Members = @("Kashmira", "Amy", "Shalini") 
+    }
+    @{ 
+        Name    = "BETA-EUZRH01"
+        OU      = "OU=GROUPS,OU=LOTUS,DC=syd,DC=ltd"
+        Members = @("Amyra", "Disha", "Nidhhi") 
+    }
+    @{ 
+        Name    = "GAMMA-EUFRA01"
+        OU      = "OU=GROUPS,OU=LOTUS,DC=syd,DC=ltd"
+        Members = @("Pranitha", "Shraddha", "Diana") 
+    }
+    @{ 
+        Name    = "GAMMA-EUFRA02"
+        OU      = "OU=GROUPS,OU=LOTUS,DC=syd,DC=ltd"
+        Members = @("Anagha", "Bindu", "Raiza") 
+    }
+    @{ 
+        Name    = "DELTA-APSEST02"
+        OU      = "OU=GROUPS,OU=LOTUS,DC=syd,DC=ltd"
+        Members = @("Shriya", "Jennifer", "Avika") 
+    }
+    @{ 
+        Name    = "EPSLION-USWST01"
+        OU      = "OU=GROUPS,OU=LOTUS,DC=syd,DC=ltd"
+        Members = @("Georgina", "Hailee", "Selena") 
+    }
+    @{ 
+        Name    = "ZETA-MXCTRL01"
+        OU      = "OU=GROUPS,OU=LOTUS,DC=syd,DC=ltd"
+        Members = @("Kylie", "Sharvari", "Anushka") 
+    }
+)
+
+foreach ($Group in $GroupProvisions) {
+    if (-not (Get-ADGroup -Filter "Name -eq '$($Group.Name)'")) {
+        New-ADGroup -Name $Group.Name `
+                    -SamAccountName $Group.Name `
+                    -GroupScope Global `
+                    -GroupCategory Security `
+                    -Path $Group.OU `
+                    -Description "Automated group for $($Group.Name)"
+        Write-Host "Created Group: $($Group.Name)" -ForegroundColor Green
+    } else {
+        Write-Host "Group $($Group.Name) already exists. Proceeding to membership check." -ForegroundColor Yellow
+    }
+
+    foreach ($Member in $Group.Members) {
+        try {
+            $ADUser = Get-ADUser -Identity $Member
+            if (-not (Get-ADPrincipalGroupMembership -Identity $Member | Where-Object {$_.Name -eq $Group.Name})) {
+                Add-ADGroupMember -Identity $Group.Name -Members $ADUser
+                Write-Host "  + Added user '$Member' to group '$($Group.Name)'" -ForegroundColor Cyan
+            } else {
+                Write-Host "  o User '$Member' is already a member of '$($Group.Name)'" -ForegroundColor Gray
+            }
+        } 
+        catch {
+            Write-Warning "  ! User '$Member' could not be found in Active Directory. Skipping."
+        }
+    }
+}
+
+# Self-destruct scheduled task so it only runs once
+Unregister-ScheduledTask -TaskName "PostADExtension" -Confirm:$false
+'@
+
+# Save the post-reboot script to the local drive
+$ScriptPath = "C:\ProvisionAD.ps1"
+Out-File -FilePath $ScriptPath -InputObject $PostRebootScript -Encoding UTF8
+
+# 4. Create Scheduled Task to run the script immediately after reboot
+$Action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File $ScriptPath"
+$Trigger = New-ScheduledTaskTrigger -AtStartup
+$Principal = New-ScheduledTaskPrincipal -UserId "NT AUTHORITY\SYSTEM" -LogonType ServiceAccount -RunLevel Highest
+Register-ScheduledTask -TaskName "PostADExtension" -Action $Action -Trigger $Trigger -Principal $Principal
+
+# 5. Deploy AD Forest (This triggers the reboot)
+$DSRMPasswordPlain = "YourComplexDSRMpassword123!"
+$DSRMPasswordSecure = ConvertTo-SecureString -String $DSRMPasswordPlain -AsPlainText -Force
+
+Import-Module ADDSDeployment
+Install-ADDSForest `
+-CreateDnsDelegation:$false `
+-DatabasePath "C:\Windows\NTDS" `
+-DomainMode "Win2025" `
+-DomainName "syd.ltd" `
+-DomainNetbiosName "SYD" `
+-ForestMode "Win2025" `
+-InstallDns:$true `
+-NoRebootOnCompletion:$false `
+-SafeModeAdministratorPassword $DSRMPasswordSecure `
+-SysvolPath "C:\Windows\SYSVOL" `
+-Force:$true
+</powershell>
+
+## Creating Sub OU
+
+Import-Module ActiveDirectory
+
+# 1. Define the Main (Parent) OU Name and Path
+$ParentOUName = "LOTUS"
+$DomainDN     = "DC=syd,DC=ltd"
+$MainOUDN     = "OU=$ParentOUName,$DomainDN"
+
+# Automatically create the Parent OU if it doesn't exist yet
+if (-not (Get-ADOrganizationalUnit -Filter "Name -eq '$ParentOUName'" -SearchBase $DomainDN -ErrorAction SilentlyContinue)) {
+    Write-Host "Main OU '$ParentOUName' not found. Creating it now..." -ForegroundColor Yellow
+    New-ADOrganizationalUnit -Name $ParentOUName `
+                             -Path $DomainDN `
+                             -ProtectedFromAccidentalDeletion $false `
+                             -Description "Main Parent OU for Resources"
+    Write-Host "Successfully created Main OU: $MainOUDN" -ForegroundColor Green
+}
+
+# 2. Define the list of Sub-OUs you want to create inside it
+$SubOUs = @("ALPHA", "BETA", "GAMMA", "EPSLION", "ZETA", "DELTA", "GROUPS")
+
+Write-Host "`nStarting Sub-OU provision tracking for Main OU: $MainOUDN" -ForegroundColor Cyan
+
+# 3. Iterate and build the structures safely
+foreach ($SubOU in $SubOUs) {
+    # Construct the full target Distinguished Name for the validation check
+    $TargetDN = "OU=$SubOU,$MainOUDN"
+    
+    # FIX: Use -Filter instead of -Identity. -Filter returns $null safely if the object isn't found.
+    if (-not (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$TargetDN'")) {
+        New-ADOrganizationalUnit -Name $SubOU `
+                                 -Path $MainOUDN `
+                                 -ProtectedFromAccidentalDeletion $false `
+                                 -Description "Sub-OU for $SubOU accounts"
+        
+        Write-Host "  + Successfully created Sub-OU: $SubOU" -ForegroundColor Green
+    } else {
+        Write-Host "  o Sub-OU '$SubOU' already exists. Skipping." -ForegroundColor Gray
+    }
+}
+
+Creating Group for users
+
+Import-Module ActiveDirectory
+
+# Define your groups, their target OUs, and the members that belong to them
+$GroupProvisions = @(
+    @{ 
+        Name    = "ALPHA-USEST02"
+        OU      = "OU=GROUP,DC=syd,DC=ltd"
+        Members = @("Sobhita", "Riya", "Tara") 
+    }
+    @{ 
+        Name    = "ALPHA-CAWST01"
+        OU      = "OU=GROUP,DC=syd,DC=ltd"
+        Members = @("Kashmira", "Amy", "Shalini") 
+    }
+    @{ 
+        Name    = "BETA-EUZRH01"
+        OU      = "OU=GROUP,DC=syd,DC=ltd"
+        Members = @("Amyra", "Disha", "Nidhhi") 
+    }
+    @{ 
+        Name    = "GAMMA-EUFRA01"
+        OU      = "OU=GROUP,DC=syd,DC=ltd"
+        Members = @("Pranitha", "Shraddha", "Diana") 
+    }
+    @{ 
+        Name    = "GAMMA-EUFRA02"
+        OU      = "OU=GROUP,DC=syd,DC=ltd"
+        Members = @("Anagha", "Bindu", "Raiza") 
+    }
+    @{ 
+        Name    = "DELTA-APSEST02"
+        OU      = "OU=GROUP,DC=syd,DC=ltd"
+        Members = @("Shriya", "Jennifer", "Avika") 
+    }
+    @{ 
+        Name    = "EPSLION-USWST01"
+        OU      = "OU=GROUP,DC=syd,DC=ltd"
+        Members = @("Georgina", "Hailee", "Selena") 
+    }
+    @{ 
+        Name    = "ZETA-MXCTRL01"
+        OU      = "OU=GROUP,DC=syd,DC=ltd"
+        Members = @("Kylie", "Sharvari", "Anushka") 
+    }
+)
+
+foreach ($Group in $GroupProvisions) {
+    # 1. Check if the group already exists; if not, create it
+    if (-not (Get-ADGroup -Filter "Name -eq '$($Group.Name)'")) {
+        New-ADGroup -Name $Group.Name `
+                    -SamAccountName $Group.Name `
+                    -GroupScope Global `
+                    -GroupCategory Security `
+                    -Path $Group.OU `
+                    -Description "Automated group for $($Group.Name)"
+        
+        Write-Host "Created Group: $($Group.Name)" -ForegroundColor Green
+    } else {
+        Write-Host "Group $($Group.Name) already exists. Proceeding to membership check." -ForegroundColor Yellow
+    }
+
+    # 2. Add members to the group dynamically
+    foreach ($Member in $Group.Members) {
+        try {
+            # Verify the user actually exists in AD before trying to add them
+            $ADUser = Get-ADUser -Identity $Member
+            
+            # Check if the user is already a member of the group to avoid redundant warnings
+            if (-not (Get-ADPrincipalGroupMembership -Identity $Member | Where-Object {$_.Name -eq $Group.Name})) {
+                Add-ADGroupMember -Identity $Group.Name -Members $ADUser
+                Write-Host "  + Added user '$Member' to group '$($Group.Name)'" -ForegroundColor Cyan
+            } else {
+                Write-Host "  o User '$Member' is already a member of '$($Group.Name)'" -ForegroundColor Gray
+            }
+        } 
+        catch {
+            Write-Warning "  ! User '$Member' could not be found in Active Directory. Skipping."
+        }
+    }
+}
+
+
+
+
+
