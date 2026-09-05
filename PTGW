@@ -1,0 +1,244 @@
+#!/bin/bash
+
+PEER_APSEST02-USEST02_TGW () {
+     TGW=$(aws ec2 describe-transit-gateways \
+    --region ap-southeast-2 \
+    --filters "Name=tag:Name,Values=APSEST02-TGW01" "Name=state,Values=available" \
+    --query "TransitGateways[0].TransitGatewayId" \
+    --output text \
+    --profile DELTA)
+
+PTGW=$(aws ec2 describe-transit-gateways \
+    --region us-east-2 \
+    --filters "Name=tag:Name,Values=USEST02-TGW01" "Name=state,Values=available"\
+    --query "TransitGateways[0].TransitGatewayId" \
+    --output text \
+    --profile ALPHA)
+
+    aws ec2 create-transit-gateway-peering-attachment \
+    --region ap-southeast-2 \
+    --transit-gateway-id $TGW \
+    --peer-transit-gateway-id $PTGW \
+    --peer-region us-east-2 \
+    --peer-account-id 392039768453 \
+    --tag-specifications 'ResourceType=transit-gateway-attachment,Tags=[{Key=Name,Value=PEER_APSEST02 <-> USEST02_TGW}]' \
+    --profile DELTA
+
+sleep 60
+
+ATTMID=$(aws ec2 describe-transit-gateway-peering-attachments \
+    --region us-east-2 \
+    --query "TransitGatewayPeeringAttachments[?Tags==\`[]\` || Tags==null].TransitGatewayAttachmentId" \
+    --output text \
+    --profile ALPHA)
+
+aws ec2 create-tags \
+    --resources $ATTMID \
+    --tags Key=Name,Value="PEER_MIL <-> ZRH-TGW" \
+    --region us-east-2 \
+    --profile ALPHA
+
+ATTM=$(aws ec2 describe-transit-gateway-peering-attachments \
+    --region us-east-2 \
+    --filters "Name=state,Values=pendingAcceptance" \
+    --query "TransitGatewayPeeringAttachments[*].TransitGatewayAttachmentId" \
+    --output text \
+    --profile ALPHA)
+        
+    aws ec2 accept-transit-gateway-peering-attachment \
+    --transit-gateway-attachment-id $ATTM \
+    --region us-east-2 \
+    --profile ALPHA
+}
+
+PEER_ZRH-ESP_TGW () {
+     TGW=$(aws ec2 describe-transit-gateways \
+    --region ap-southeast-2 \
+    --filters "Name=tag:Name,Values=APSEST02-TGW01" "Name=state,Values=available" \
+    --query "TransitGateways[0].TransitGatewayId" \
+    --output text \
+    --profile DELTA)
+
+PTGW=$(aws ec2 describe-transit-gateways \
+    --region eu-south-2 \
+    --filters "Name=tag:Name,Values=ALPHA_ESP-TGW01" "Name=state,Values=available"\
+    --query "TransitGateways[0].TransitGatewayId" \
+    --output text \
+    --profile ALPHA)
+
+    aws ec2 create-transit-gateway-peering-attachment \
+    --region ap-southeast-2 \
+    --transit-gateway-id $TGW \
+    --peer-transit-gateway-id $PTGW \
+    --peer-region eu-south-2 \
+    --peer-account-id 332999683477 \
+    --tag-specifications 'ResourceType=transit-gateway-attachment,Tags=[{Key=Name,Value=PEER_ZRH <-> ESP-TGW}]' \
+    --profile DELTA
+
+sleep 60
+
+ATTMID=$(aws ec2 describe-transit-gateway-peering-attachments \
+    --region eu-south-2 \
+    --query "TransitGatewayPeeringAttachments[?Tags==\`[]\` || Tags==null].TransitGatewayAttachmentId" \
+    --output text \
+    --profile ALPHA)
+
+aws ec2 create-tags \
+    --resources $ATTMID \
+    --tags Key=Name,Value="PEER_ESP <-> ZRH-TGW" \
+    --region eu-south-2 \
+    --profile ALPHA
+
+ATTM=$(aws ec2 describe-transit-gateway-peering-attachments \
+    --region eu-south-2 \
+    --filters "Name=state,Values=pendingAcceptance" \
+    --query "TransitGatewayPeeringAttachments[*].TransitGatewayAttachmentId" \
+    --output text \
+    --profile ALPHA)
+        
+    aws ec2 accept-transit-gateway-peering-attachment \
+    --transit-gateway-attachment-id $ATTM \
+    --region eu-south-2 \
+    --profile ALPHA
+}
+
+PEER_ZRH-MEL_TGW() {
+
+TGW=$(aws ec2 describe-transit-gateways \
+    --region ap-southeast-2 \
+    --filters "Name=tag:Name,Values=APSEST02-TGW01" "Name=state,Values=available" \
+    --query "TransitGateways[0].TransitGatewayId" \
+    --output text \
+    --profile DELTA)
+    echo $TGW
+
+PTGW=$(aws ec2 describe-transit-gateways \
+    --region ap-southeast-4 \
+    --filters "Name=tag:Name,Values=DELTA_DMZ_MEL-TGW01" "Name=state,Values=available"\
+    --query "TransitGateways[0].TransitGatewayId" \
+    --output text \
+    --profile DELTA-DMZ)
+
+    aws ec2 create-transit-gateway-peering-attachment \
+    --region ap-southeast-2 \
+    --transit-gateway-id $TGW \
+    --peer-transit-gateway-id $PTGW \
+    --peer-region ap-southeast-4 \
+    --peer-account-id 907244239719 \
+    --tag-specifications 'ResourceType=transit-gateway-attachment,Tags=[{Key=Name,Value=PEER_ZRH <-> MEL-TGW}]' \
+    --profile DELTA
+
+sleep 60
+
+ATTMID=$(aws ec2 describe-transit-gateway-peering-attachments \
+    --region ap-southeast-4 \
+    --query "TransitGatewayPeeringAttachments[?Tags==\`[]\` || Tags==null].TransitGatewayAttachmentId" \
+    --output text \
+    --profile DELTA-DMZ)
+
+aws ec2 create-tags \
+    --resources $ATTMID \
+    --tags Key=Name,Value="PEER_MEL <-> ZRH-TGW" \
+    --region ap-southeast-4 \
+    --profile DELTA-DMZ
+
+ATTM=$(aws ec2 describe-transit-gateway-peering-attachments \
+    --region ap-southeast-4 \
+    --filters "Name=state,Values=pendingAcceptance" \
+    --query "TransitGatewayPeeringAttachments[*].TransitGatewayAttachmentId" \
+    --output text \
+    --profile DELTA-DMZ)
+        
+    aws ec2 accept-transit-gateway-peering-attachment \
+    --transit-gateway-attachment-id $ATTM \
+    --region ap-southeast-4 \
+    --profile DELTA-DMZ
+}
+
+PEER_ZRH-SYD_TGW() {
+
+    TGW=$(aws ec2 describe-transit-gateways \
+    --region ap-southeast-2 \
+    --filters "Name=tag:Name,Values=APSEST02-TGW01" "Name=state,Values=available" \
+    --query "TransitGateways[0].TransitGatewayId" \
+    --output text \
+    --profile DELTA)
+
+PTGW=$(aws ec2 describe-transit-gateways \
+    --region ap-southeast-2 \
+    --filters "Name=tag:Name,Values=DELTA_SYD-TGW01" "Name=state,Values=available"\
+    --query "TransitGateways[0].TransitGatewayId" \
+    --output text \
+    --profile DELTA)
+
+    aws ec2 create-transit-gateway-peering-attachment \
+    --region ap-southeast-2 \
+    --transit-gateway-id $TGW \
+    --peer-transit-gateway-id $PTGW \
+    --peer-region ap-southeast-2 \
+    --peer-account-id 905418024066 \
+    --tag-specifications 'ResourceType=transit-gateway-attachment,Tags=[{Key=Name,Value=PEER_ZRH <-> SYD-TGW}]' \
+    --profile DELTA
+
+sleep 60
+
+ATTMID=$(aws ec2 describe-transit-gateway-peering-attachments \
+    --region ap-southeast-2 \
+    --query "TransitGatewayPeeringAttachments[?Tags==\`[]\` || Tags==null].TransitGatewayAttachmentId" \
+    --output text \
+    --profile DELTA)
+
+aws ec2 create-tags \
+    --resources $ATTMID \
+    --tags Key=Name,Value="PEER_SYD <-> ZRH-TGW" \
+    --region ap-southeast-2 \
+    --profile DELTA
+
+ATTM=$(aws ec2 describe-transit-gateway-peering-attachments \
+    --region ap-southeast-2 \
+    --filters "Name=state,Values=pendingAcceptance" \
+    --query "TransitGatewayPeeringAttachments[*].TransitGatewayAttachmentId" \
+    --output text \
+    --profile DELTA)
+        
+    aws ec2 accept-transit-gateway-peering-attachment \
+    --transit-gateway-attachment-id $ATTM \
+    --region ap-southeast-2 \
+    --profile DELTA
+    }
+
+select PROFILE in "PEER_APSEST02-USEST02_TGW" "PEER_ZRH-ESP_TGW" "PEER_ZRH-MEL_TGW" "PEER_ZRH-SYD_TGW" "ALL"; do 
+    case $PROFILE in
+        "PEER_APSEST02-USEST02_TGW")
+            PEER_APSEST02-USEST02_TGW
+            break
+            ;;
+
+        "PEER_ZRH-ESP_TGW")
+            PEER_ZRH-ESP_TGW
+            break
+            ;;
+
+        "PEER_ZRH-MEL_TGW")
+            PEER_ZRH-MEL_TGW
+            break
+            ;;
+
+        "PEER_ZRH-SYD_TGW")
+            PEER_ZRH-SYD_TGW
+            break
+            ;;
+
+        "ALL")
+            PEER_APSEST02-USEST02_TGW
+            PEER_ZRH-ESP_TGW
+            PEER_ZRH-MEL_TGW
+            PEER_ZRH-SYD_TGW
+            break
+            ;;
+            
+            *)
+            echo "Invalid choice. Please select a number from 1 to 2"
+            ;;
+    esac
+done
